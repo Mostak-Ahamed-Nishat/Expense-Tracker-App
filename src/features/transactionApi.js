@@ -10,12 +10,19 @@ export const addTransaction = async (data) => {
     return response.data
 }
 
-export const editTransaction = async ({id, data}) => {
-    const response = await axios.put(`/transactions/?${id}`, data)
+export const editTransaction = async ({
+    id,
+    data
+}) => {
+    console.log(` id from put axios ${id} data ${JSON.stringify(data)}`);
+    const response = await axios.put(`/transactions/${id}`, {
+        ...data,
+        id
+    })
     return response.data
 }
 
 export const deleteTransaction = async (id) => {
-    const response = await axios.delete(`/transactions/?${id}`)
+    const response = await axios.delete(`/transactions/${id}`)
     return response.data
 }

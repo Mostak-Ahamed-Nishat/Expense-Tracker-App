@@ -124,6 +124,10 @@ label {
     background-color: #e6425e;
 }
 
+.error {
+    color: #9e1028
+}
+
 .transaction .right {
     display: flex;
     justify-content: space-between;
@@ -183,6 +187,7 @@ label {
 }
 
 @media (max-width: 450px) {
+
     .top_card,
     .form {
         min-width: 90%;

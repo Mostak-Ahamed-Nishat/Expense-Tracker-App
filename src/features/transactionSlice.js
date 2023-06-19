@@ -15,7 +15,8 @@ const initialState = {
     transactions: [],
     isLoading: false,
     isError: false,
-    error: ''
+    error: '',
+    editing: {},
 }
 
 //Async Thunk for requesting api
@@ -28,7 +29,7 @@ export const fetchTransaction = createAsyncThunk('transactions/fetchTransaction'
 
 //Create the transaction
 export const createTransaction = createAsyncThunk('transactions/createTransaction', async (data) => {
-    const transaction= await addTransaction(data)
+    const transaction = await addTransaction(data)
     return transaction
 })
 
@@ -37,7 +38,10 @@ export const changeTransaction = createAsyncThunk('transactions/changeTransactio
     id,
     data
 }) => {
-    const transaction = await editTransaction(id, data)
+    const transaction = await editTransaction({
+        id,
+        data
+    })
     return transaction
 })
 
@@ -53,7 +57,14 @@ export const removeTransaction = createAsyncThunk('transactions/removeTransactio
 const transactionReducer = createSlice({
     name: 'transactions',
     initialState,
-    reducers: {},
+    reducers: {
+        editActive: (state, action) => {
+            state.editing = action.payload
+        },
+        editInactive: (state) => {
+            state.editing = {}
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchTransaction.pending, (state) => {
                 state.isLoading = true;
@@ -96,16 +107,21 @@ const transactionReducer = createSlice({
             .addCase(removeTransaction.pending, (state) => {
                 state.isLoading = true;
                 state.isError = false;
-            }).addCase(removeTransaction.fulfilled, (state) => {
+            }).addCase(removeTransaction.fulfilled, (state,action) => {
+                console.log(action);
                 state.isLoading = false
                 state.isError = false;
+                state.transactions=state.transactions.filter(transaction => transaction.id !== action.meta.arg)
             }).addCase(removeTransaction.rejected, (state, action) => {
                 state.isLoading = false
                 state.isError = true
                 state.error = action.error.message
             })
     }
-
 })
 
 export default transactionReducer.reducer
+export const {
+    editActive,
+    editInactive
+} = transactionReducer.actions
